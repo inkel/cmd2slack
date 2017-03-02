@@ -53,18 +53,15 @@ func main() {
 		os.Exit(2)
 	}
 
-	var out bytes.Buffer
-
 	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = &out
+	out, err := cmd.CombinedOutput()
 
-	if err := cmd.Run(); err != nil {
+	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(3)
 	}
 
-	payload.Text = "```\n" + out.String() + "\n```"
+	payload.Text = "```\n" + string(out) + "\n```"
 
 	body := new(bytes.Buffer)
 
