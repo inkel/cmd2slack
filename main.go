@@ -70,12 +70,12 @@ func main() {
 	res, err := http.Post(*hook, "application/json", body)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
-		os.Exit(2)
+		os.Exit(4)
 	}
 
 	if res.StatusCode != http.StatusOK {
 		fmt.Fprintln(os.Stderr, "posting to slack failed with", res.Status)
 		// TODO this should be more expressive
-		os.Exit(3)
+		os.Exit(5)
 	}
 }
