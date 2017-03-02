@@ -76,7 +76,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	if res.Status != 200 {
+	if res.StatusCode != http.StatusOK {
 		fmt.Fprintln(os.Stderr, "posting to slack failed with", res.Status)
 		// TODO this should be more expressive
 		os.Exit(3)
