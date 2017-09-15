@@ -15,6 +15,7 @@ type Payload struct {
 	Username  string `json:"username,omitempty"`
 	Channel   string `json:"channel,omitempty"`
 	IconEmoji string `json:"icon_emoji,omitempty"`
+	IconURL   string `json:"icon_url,omitempty"`
 }
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 		channel  = flag.String("channel", "", "Channel where to post the output")
 		emoji    = flag.String("emoji", "", "Emoji to use")
 		username = flag.String("username", "", "Username")
+		icon     = flag.String("icon", "", "URL of icon to use")
 	)
 
 	flag.Parse()
@@ -44,6 +46,10 @@ func main() {
 
 	if *emoji != "" {
 		payload.IconEmoji = *emoji
+	}
+
+	if *icon != "" {
+		payload.IconURL = *icon
 	}
 
 	args := flag.Args()
