@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"time"
 )
 
 type message struct {
@@ -38,7 +39,11 @@ type field struct {
 func main() {
 	msg := message{}
 
-	hook := flag.String("hook", "", "Slack Incoming Webhook URL")
+	var (
+		hook   = flag.String("hook", "", "Slack Incoming Webhook URL")
+		timing = flag.Bool("timing", false, "Include command execution timing")
+	)
+
 	flag.StringVar(&msg.Channel, "channel", "", "Channel where to post the output")
 	flag.StringVar(&msg.IconEmoji, "emoji", "", "Emoji to use")
 	flag.StringVar(&msg.Username, "username", "", "Username")
@@ -65,6 +70,8 @@ func main() {
 		MrkdwnIn: []string{"pretext", "text"},
 	}
 
+	start := time.Now()
+
 	out, err := exec.Command(exe, args...).CombinedOutput()
 	if err != nil {
 		a.Color = "danger"
@@ -72,6 +79,10 @@ func main() {
 	}
 	if len(out) > 0 {
 		a.Text = fmt.Sprintf("```\n%s```", out)
+	}
+
+	if *timing {
+		a.Fields = append(a.Fields, field{Title: "Timing", Value: time.Since(start).String(), Short: true})
 	}
 
 	msg.Attachments = []attachment{a}
