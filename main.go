@@ -19,13 +19,13 @@ type message struct {
 }
 
 func main() {
-	payload := &message{}
+	msg := &message{}
 
 	hook := flag.String("hook", "", "Slack Incoming Webhook URL")
-	flag.StringVar(&payload.Channel, "channel", "", "Channel where to post the output")
-	flag.StringVar(&payload.IconEmoji, "emoji", "", "Emoji to use")
-	flag.StringVar(&payload.Username, "username", "", "Username")
-	flag.StringVar(&payload.IconURL, "icon", "", "URL of icon to use")
+	flag.StringVar(&msg.Channel, "channel", "", "Channel where to post the output")
+	flag.StringVar(&msg.IconEmoji, "emoji", "", "Emoji to use")
+	flag.StringVar(&msg.Username, "username", "", "Username")
+	flag.StringVar(&msg.IconURL, "icon", "", "URL of icon to use")
 	flag.Parse()
 
 	if *hook == "" {
@@ -40,7 +40,9 @@ func main() {
 		os.Exit(2)
 	}
 
-	cmd := exec.Command(args[0], args[1:]...)
+	exe, args := args[0], args[1:]
+
+	cmd := exec.Command(exe, args...)
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {
@@ -48,11 +50,11 @@ func main() {
 		os.Exit(3)
 	}
 
-	payload.Text = "```\n" + string(out) + "\n```"
+	msg.Text = "```\n" + string(out) + "\n```"
 
 	body := new(bytes.Buffer)
 
-	json.NewEncoder(body).Encode(payload)
+	json.NewEncoder(body).Encode(msg)
 
 	res, err := http.Post(*hook, "application/json", body)
 	if err != nil {
