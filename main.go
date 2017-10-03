@@ -36,6 +36,10 @@ type field struct {
 	Short bool   `json:"short,omitempty"`
 }
 
+func (a *attachment) addField(title, value string) {
+	a.Fields = append(a.Fields, field{Title: title, Value: value, Short: true})
+}
+
 func main() {
 	msg := message{}
 
@@ -75,14 +79,14 @@ func main() {
 	out, err := exec.Command(exe, args...).CombinedOutput()
 	if err != nil {
 		a.Color = "danger"
-		a.Fields = append(a.Fields, field{Title: "Error", Value: err.Error(), Short: true})
+		a.addField("Error", err.Error())
 	}
 	if len(out) > 0 {
 		a.Text = fmt.Sprintf("```\n%s```", out)
 	}
 
 	if *timing {
-		a.Fields = append(a.Fields, field{Title: "Timing", Value: time.Since(start).String(), Short: true})
+		a.addField("Timing", time.Since(start).String())
 	}
 
 	msg.Attachments = []attachment{a}
