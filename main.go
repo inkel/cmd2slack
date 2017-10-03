@@ -45,8 +45,9 @@ func main() {
 	msg := message{}
 
 	var (
-		hook   = flag.String("hook", "", "Slack Incoming Webhook URL")
-		timing = flag.Bool("timing", false, "Include command execution timing")
+		hook    = flag.String("hook", "", "Slack Incoming Webhook URL")
+		timing  = flag.Bool("timing", false, "Include command execution timing")
+		verbose = flag.Bool("verbose", false, "Show command execution on screen")
 	)
 
 	flag.StringVar(&msg.Channel, "channel", "", "Channel where to post the output")
@@ -77,12 +78,24 @@ func main() {
 
 	start := time.Now()
 
-	out, err := exec.Command(exe, args...).CombinedOutput()
+	out := bytes.NewBuffer(nil)
+
+	cmd := exec.Command(exe, args...)
+	cmd.Stdout = out
+	cmd.Stderr = out
+
+	if *verbose {
+		cmd.Stdout = io.MultiWriter(out, os.Stdout)
+		cmd.Stderr = io.MultiWriter(out, os.Stderr)
+	}
+
+	err := cmd.Run()
 	if err != nil {
 		a.Color = "danger"
 		a.addField("Error", err.Error())
+		fmt.Fprintln(os.Stderr, err)
 	}
-	if len(out) > 0 {
+	if out.Len() > 0 {
 		a.Text = fmt.Sprintf("```\n%s```", out)
 	}
 
