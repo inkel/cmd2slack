@@ -58,13 +58,23 @@ func main() {
 
 	exe, args := args[0], args[1:]
 
-	out, err := exec.Command(exe, args...).CombinedOutput()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(3)
+	a := attachment{
+		Color:    "good",
+		Fallback: fmt.Sprintf("%s results", exe),
+		Pretext:  fmt.Sprintf("`%s`", pretty(exe, args)),
+		MrkdwnIn: []string{"pretext", "text"},
 	}
 
-	msg.Text = "```\n" + string(out) + "\n```"
+	out, err := exec.Command(exe, args...).CombinedOutput()
+	if err != nil {
+		a.Color = "danger"
+		a.Fields = append(a.Fields, field{Title: "Error", Value: err.Error(), Short: true})
+	}
+	if len(out) > 0 {
+		a.Text = fmt.Sprintf("```\n%s```", out)
+	}
+
+	msg.Attachments = []attachment{a}
 
 	body := new(bytes.Buffer)
 
@@ -81,4 +91,30 @@ func main() {
 		// TODO this should be more expressive
 		os.Exit(5)
 	}
+}
+
+func pretty(cmd string, args []string) string {
+	buf := bytes.NewBufferString(cmd)
+
+	for _, arg := range args {
+		fmts := " %s"
+		for _, b := range arg {
+			if isSpace(b) {
+				fmts = " %q"
+				break
+			}
+		}
+
+		fmt.Fprintf(buf, fmts, arg)
+	}
+	return buf.String()
+}
+
+// Borrowed from unicode.IsSpace
+func isSpace(r rune) bool {
+	switch r {
+	case '\t', '\n', '\v', '\f', '\r', ' ', 0x85, 0xA0:
+		return true
+	}
+	return false
 }
