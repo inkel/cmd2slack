@@ -10,7 +10,7 @@ import (
 	"os/exec"
 )
 
-type Payload struct {
+type message struct {
 	Text      string `json:"text"`
 	Username  string `json:"username,omitempty"`
 	Channel   string `json:"channel,omitempty"`
@@ -19,7 +19,7 @@ type Payload struct {
 }
 
 func main() {
-	payload := &Payload{}
+	payload := &message{}
 
 	hook := flag.String("hook", "", "Slack Incoming Webhook URL")
 	flag.StringVar(&payload.Channel, "channel", "", "Channel where to post the output")
