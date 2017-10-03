@@ -36,6 +36,8 @@ Usage of cmd2slack:
         Include command execution timing
   -username string
         Username
+  -verbose
+        Show command execution on screen
 ```
 
 ## Installation
