@@ -21,35 +21,16 @@ type Payload struct {
 func main() {
 	payload := &Payload{}
 
-	var (
-		hook     = flag.String("hook", "", "Slack Incoming Webhook URL")
-		channel  = flag.String("channel", "", "Channel where to post the output")
-		emoji    = flag.String("emoji", "", "Emoji to use")
-		username = flag.String("username", "", "Username")
-		icon     = flag.String("icon", "", "URL of icon to use")
-	)
-
+	hook := flag.String("hook", "", "Slack Incoming Webhook URL")
+	flag.StringVar(&payload.Channel, "channel", "", "Channel where to post the output")
+	flag.StringVar(&payload.IconEmoji, "emoji", "", "Emoji to use")
+	flag.StringVar(&payload.Username, "username", "", "Username")
+	flag.StringVar(&payload.IconURL, "icon", "", "URL of icon to use")
 	flag.Parse()
 
 	if *hook == "" {
 		fmt.Fprintln(os.Stderr, "-hook is required")
 		os.Exit(1)
-	}
-
-	if *channel != "" {
-		payload.Channel = *channel
-	}
-
-	if *username != "" {
-		payload.Username = *username
-	}
-
-	if *emoji != "" {
-		payload.IconEmoji = *emoji
-	}
-
-	if *icon != "" {
-		payload.IconURL = *icon
 	}
 
 	args := flag.Args()
