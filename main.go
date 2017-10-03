@@ -79,17 +79,15 @@ func main() {
 	start := time.Now()
 
 	out := bytes.NewBuffer(nil)
-	var stdout, stderr io.Writer
-
-	stdout, stderr = out, out
-	if *verbose {
-		stdout = io.MultiWriter(out, os.Stdout)
-		stderr = io.MultiWriter(out, os.Stderr)
-	}
 
 	cmd := exec.Command(exe, args...)
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
+	cmd.Stdout = out
+	cmd.Stderr = out
+
+	if *verbose {
+		cmd.Stdout = io.MultiWriter(out, os.Stdout)
+		cmd.Stderr = io.MultiWriter(out, os.Stderr)
+	}
 
 	err := cmd.Run()
 	if err != nil {
