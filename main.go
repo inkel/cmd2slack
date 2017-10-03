@@ -11,11 +11,28 @@ import (
 )
 
 type message struct {
-	Text      string `json:"text"`
-	Username  string `json:"username,omitempty"`
-	Channel   string `json:"channel,omitempty"`
-	IconEmoji string `json:"icon_emoji,omitempty"`
-	IconURL   string `json:"icon_url,omitempty"`
+	Text        string       `json:"text"`
+	Username    string       `json:"username,omitempty"`
+	Channel     string       `json:"channel,omitempty"`
+	IconEmoji   string       `json:"icon_emoji,omitempty"`
+	IconURL     string       `json:"icon_url,omitempty"`
+	Attachments []attachment `json:"attachments,omitempty"`
+}
+
+type attachment struct {
+	Fallback string   `json:"fallback,omitempty"`
+	Color    string   `json:"color,omitempty"`
+	Pretext  string   `json:"pretext,omitempty"`
+	Text     string   `json:"text,omitempty"`
+	MrkdwnIn []string `json:"mrkdwn_in,omitempty"`
+	Fields   []field  `json:"fields,omitempty"`
+	Ts       int      `json:"ts,omitempty"`
+}
+
+type field struct {
+	Title string `json:"title,omitempty"`
+	Value string `json:"value,omitempty"`
+	Short bool   `json:"short,omitempty"`
 }
 
 func main() {
