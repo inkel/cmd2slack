@@ -19,7 +19,7 @@ type message struct {
 }
 
 func main() {
-	msg := &message{}
+	msg := message{}
 
 	hook := flag.String("hook", "", "Slack Incoming Webhook URL")
 	flag.StringVar(&msg.Channel, "channel", "", "Channel where to post the output")
@@ -34,7 +34,6 @@ func main() {
 	}
 
 	args := flag.Args()
-
 	if len(args) == 0 {
 		fmt.Fprintln(os.Stderr, "expected a command")
 		os.Exit(2)
@@ -42,9 +41,7 @@ func main() {
 
 	exe, args := args[0], args[1:]
 
-	cmd := exec.Command(exe, args...)
-	out, err := cmd.CombinedOutput()
-
+	out, err := exec.Command(exe, args...).CombinedOutput()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(3)
