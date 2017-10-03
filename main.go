@@ -91,11 +91,13 @@ func main() {
 
 	msg.Attachments = []attachment{a}
 
-	body := new(bytes.Buffer)
+	body, err := json.Marshal(msg)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(3)
+	}
 
-	json.NewEncoder(body).Encode(msg)
-
-	res, err := http.Post(*hook, "application/json", body)
+	res, err := http.Post(*hook, "application/json", bytes.NewReader(body))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(4)
