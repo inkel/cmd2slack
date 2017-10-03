@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -102,10 +103,11 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(4)
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
 		fmt.Fprintln(os.Stderr, "posting to slack failed with", res.Status)
-		// TODO this should be more expressive
+		io.Copy(os.Stderr, res.Body)
 		os.Exit(5)
 	}
 }
